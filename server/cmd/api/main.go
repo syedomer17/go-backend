@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"task-manager/internal/config"
+	"task-manager/internal/routes"
 )
 
 func main() {
@@ -34,5 +35,8 @@ func main() {
 			"message": "Server is running",
 		})
 	})
+
+	routes.SetupRoutes(router)
+
 	router.Run(":" + strconv.Itoa(PORT))
 }
