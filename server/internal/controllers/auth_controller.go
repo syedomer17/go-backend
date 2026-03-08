@@ -172,3 +172,74 @@ func Login(c *gin.Context) {
 		"message": "Login Successfull",
 	})
 }
+
+func RefreshToken(c *gin.Context) {
+	refreshToken, err := c.Cookie("refreshToken")
+
+	if err != nil || refreshToken == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Unauthorized",
+		})
+		return
+	}
+
+	claims, err := utils.VerifyToken(refreshToken)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid Refresh token",
+		})
+		return
+	}
+
+	userID := claims.UserID
+
+	newAccessToken, err := utils.GenerateAccessToken(userID)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to generate token",
+		})
+		return
+	}
+
+	c.SetCookie(
+		"accessToken",
+		newAccessToken,
+		86400,
+		"/",
+		"",
+		false,
+		true,
+	)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "access Token Refreshed",
+	})
+}
+
+func Logout(c *gin.Context) {
+	c.SetCookie(
+		"accessToken",
+		"",
+		-1,
+		"/",
+		"",
+		false,
+		true,
+	)
+
+	c.SetCookie(
+		"refreshToken",
+		"",
+		-1,
+		"/",
+		"",
+		false,
+		true,
+	)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Logout Successfull",
+	})
+}
