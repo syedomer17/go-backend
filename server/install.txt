@@ -2,3 +2,9 @@ go get github.com/gin-gonic/gin
 go get go.mongodb.org/mongo-driver/mongo
 go get github.com/golang-jwt/jwt/v5
 go get golang.org/x/crypto/bcrypt
+go get github.com/ulule/limiter/v3
+go get github.com/ulule/limiter/v3/drivers/store/memory
+go get github.com/ulule/limiter/v3/drivers/middleware/gin
+go get github.com/gin-contrib/cors
+go get go.uber.org/zap
+go get github.com/redis/go-redis/v9
