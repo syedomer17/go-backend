@@ -14,6 +14,7 @@ type User struct {
 	Email string `bson:"email" json:"email"`
 	Password string `bson:"password,omitempty" json:"-"`
 	CreatedAt time.Time `bson:"createdAt" json:"createdAt"`
+	IsVerified bool `bson:"isVerified" json:"isVerified"`
 }
 
 func UserCollection() *mongo.Collection {

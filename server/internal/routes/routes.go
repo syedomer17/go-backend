@@ -12,6 +12,7 @@ func SetupRoutes(router *gin.Engine) {
 	auth := router.Group("/auth")
 	{
 		auth.POST("/register", controllers.Register)
+		auth.POST("/verify-email", controllers.VerifyEmail)
 		auth.POST("/login", controllers.Login)
 		auth.POST("/refresh", controllers.RefreshToken)
 		auth.POST("/logout", controllers.Logout)

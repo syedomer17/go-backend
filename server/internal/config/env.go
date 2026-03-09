@@ -1,23 +1,28 @@
-package config 
+package config
 
 import (
-	"os"
 	"fmt"
-	"strings"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	MongoURI string
-	PORT int 
-	JWTSECRET string
-	UPSTASH_REDIS_REST_URL string
+	MongoURI                 string
+	PORT                     int
+	JWTSECRET                string
+	UPSTASH_REDIS_REST_URL   string
 	UPSTASH_REDIS_REST_TOKEN string
+	SMTP_HOST                string
+	SMTP_PORT                int
+	SMTP_USER                string
+	SMTP_PASS                string
+	EMAIL_FROM               string
 }
 
-func Load() (*Config, error){
+func Load() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("No .env file found, using environment variables")
 	}
@@ -27,18 +32,28 @@ func Load() (*Config, error){
 		return nil, fmt.Errorf("Invalid PORT value: %v", err)
 	}
 
+	SMTP_PORT, err := strconv.Atoi(strings.TrimSpace(os.Getenv("SMTP_PORT")))
+	if err != nil {
+		return nil, fmt.Errorf("Invalid SMTP_PORT: %v", err)
+	}
+
 	cfg := &Config{
-		MongoURI: strings.TrimSpace(os.Getenv("MONGO_URI")),
-		PORT: port,
-		JWTSECRET: strings.TrimSpace(os.Getenv("JWT_SECRET")),
-		UPSTASH_REDIS_REST_URL: strings.TrimSpace(os.Getenv("UPSTASH_REDIS_REST_URL")),
+		MongoURI:                 strings.TrimSpace(os.Getenv("MONGO_URI")),
+		PORT:                     port,
+		JWTSECRET:                strings.TrimSpace(os.Getenv("JWT_SECRET")),
+		UPSTASH_REDIS_REST_URL:   strings.TrimSpace(os.Getenv("UPSTASH_REDIS_REST_URL")),
 		UPSTASH_REDIS_REST_TOKEN: strings.TrimSpace(os.Getenv("UPSTASH_REDIS_REST_TOKEN")),
+		SMTP_HOST:                strings.TrimSpace(os.Getenv("SMTP_HOST")),
+		SMTP_PORT:                SMTP_PORT,
+		SMTP_USER:                strings.TrimSpace(os.Getenv("SMTP_USER")),
+		SMTP_PASS:                strings.TrimSpace(os.Getenv("SMTP_PASS")),
+		EMAIL_FROM:               strings.TrimSpace(os.Getenv("EMAIL_FROM")),
 	}
 
 	if cfg.MongoURI == "" {
 		return nil, fmt.Errorf("MONGO_URI is required")
 	}
-	
+
 	if cfg.JWTSECRET == "" {
 		return nil, fmt.Errorf("JWT_SECRET is required")
 	}
@@ -49,6 +64,22 @@ func Load() (*Config, error){
 
 	if cfg.UPSTASH_REDIS_REST_TOKEN == "" {
 		return nil, fmt.Errorf("UPSTASH_REDIS_REST_TOKEN is required")
+	}
+
+	if cfg.SMTP_HOST == "" {
+		return nil, fmt.Errorf("SMTP_HOST is required")
+	}
+
+	if cfg.SMTP_USER == "" {
+		return nil, fmt.Errorf("SMTP_USER is required")
+	}
+
+	if cfg.SMTP_PASS == "" {
+		return nil, fmt.Errorf("SMTP_PASS is required")
+	}
+
+	if cfg.EMAIL_FROM == "" {
+		return nil, fmt.Errorf("EMAIL_FROM is required")
 	}
 
 	return cfg, nil
